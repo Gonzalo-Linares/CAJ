@@ -1,4 +1,4 @@
-# Control de Turnos 🏥
+# Control de Turnos
 
 ¡Buenas! Acá les dejo la base del proyecto estructurada y lista para que arranquemos a meter código.
 
