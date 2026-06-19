@@ -1,28 +1,28 @@
 {
     "novedades" : [
         {
-            "titulo": "titulo1",
-            "descripcion": "descripcion1",
+            "titulo": "Próximo Trekking a Huaco",
+            "descripcion": "¡Este próximo fin de semana nos vamos de trekking! No te olvides de anotarte para asegurar tu lugar. Prepará la mochila y vení a disfrutar de una jornada increíble conectando con la naturaleza de nuestra provincia.",
             "ruta" : "link1",
-            "imagen" : "imagen1.jpg"
+            "imagen" : "assets/novedades/paisajeHuaco.jpeg"
         },
         {
-            "titulo": "titulo2",
-            "descripcion": "descripcion2",
+            "titulo": "Finalizamos actividad con Boy Scouts",
+            "descripcion": "Cerramos nuestro taller especial con muchísima alegría y aprendizajes compartidos. Fue un honor transmitir los valores de la montaña a las nuevas generaciones. ¡Gracias por la gran energía!",
             "ruta" : "link2",
-            "imagen" : "imagen2.jpg"
+            "imagen" : "assets/novedades/scout.jpeg"
         },
         {
-            "titulo": "titulo3",
-            "descripcion": "descripcion3",
+            "titulo": "Primera salida de los más peques",
+            "descripcion": "El fin de semana pasado, el grupo de 'Peques' tuvo su esperada primera salida a la montaña. ¡Felicitaciones a los más pequeños por animarse a esta nueva experiencia! Que sea la primera de muchas aventuras juntos.",
             "ruta" : "link3",
-            "imagen" : "imagen3.jpg"
+            "imagen" : "assets/novedades/ninos.jpeg"
         },
         {
-            "titulo": "titulo4",
-            "descripcion": "descripcion4",
+            "titulo": "Primera Diplomatura en Montañismo de SAN JUAN",
+            "descripcion": "¡Dimos un paso gigante! Firmamos un acuerdo histórico junto a la Facultad de Ingeniería para lanzar la primera Diplomatura en Montañismo de la provincia. Seguimos trabajando para profesionalizar y jerarquizar nuestra pasión.",
             "ruta" : "link4",
-            "imagen" : "imagen4.jpg"
+            "imagen" : "assets/novedades/diplomatura.jpeg"
         }
 
     ]
