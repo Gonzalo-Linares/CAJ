@@ -51,9 +51,8 @@ class ContactoWhatsapp extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16.0),
-            ElevatedButton.icon(
+            ElevatedButton(
               onPressed: ()=> _abrirWhatsapp(context),
-              label: const Text('Enviar mensaje por WhatsApp'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: _whatsappColor,
                 foregroundColor: Colors.white,
@@ -62,6 +61,7 @@ class ContactoWhatsapp extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
               ),
+            child: const Text('Enviar mensaje por WhatsApp'),
             ),
           ],
         ),
