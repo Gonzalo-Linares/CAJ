@@ -1,10 +1,7 @@
-# Control de Turnos
+# Club Andino Jáchal
 
-¡Buenas! Acá les dejo la base del proyecto estructurada y lista para que arranquemos a meter código.
+Aplicación móvil desarrollada en Flutter para el Club Andino Jáchal. La app permite consultar novedades, acceder a una biblioteca virtual con material informativo, revisar la sección de turnos y encontrar los datos de contacto del club.
 
-## Base del proyecto
-Ya dejé configurada una arquitectura modular para facilitar el escalado de la app:
-* **Rutas:** Todo el manejo de navegación está extraído en `src/routes/routes.dart`.
-* **Página de inicio:** Ya armé el `home_page.dart` con un menú dinámico (por ahora placeholders para las pantallas).
-* **Diseño Responsive:** Creé una clase utilitaria (`responsive.dart`) para que los tamaños de la interfaz se calculen solos y no se nos rompa el diseño dependiendo del celu que usemos.
-* **Español configurado:** El soporte para fechas y texto en español ya está configurado.
+El proyecto está pensado como una primera versión funcional, con una navegación simple mediante menú lateral y una interfaz adaptada a la identidad visual del club. La información se carga desde archivos JSON y se muestra en distintas pantallas mediante widgets reutilizables, tarjetas y componentes propios de Flutter.
+
+Fue realizado como parte del práctico de Programación Móvil, aplicando conceptos de navegación, organización de vistas, manejo de widgets, carga de datos locales y diseño de interfaz.
