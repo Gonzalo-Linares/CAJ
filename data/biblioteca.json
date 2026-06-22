@@ -1,29 +1,46 @@
 {
-    "biblioteca" : [
-        {
-            "titulo": "titulo1",
-            "descripcion": "descripcion1",
-            "ruta" : "link1",
-            "icon" : "menu_book_rounded"
-        },
-        {
-            "titulo": "titulo2",
-            "descripcion": "descripcion2",
-            "ruta" : "link2",
-            "icon" : "menu_book_rounded"
-        },
-        {
-            "titulo": "titulo3",
-            "descripcion": "descripcion3",
-            "ruta" : "link3",
-            "icon" : "menu_book_rounded"
-        },
-        {
-            "titulo": "titulo4",
-            "descripcion": "descripcion4",
-            "ruta" : "link4",
-            "icon" : "menu_book_rounded"
-        }
-
-    ]
+  "biblioteca": [
+    {
+      "titulo": "Reglamento de Actividades",
+      "descripcion": "Normas básicas para participar en salidas, caminatas y actividades organizadas por el club.",
+      "categoria": "Reglamentos",
+      "ruta": "https://www.clubandinojachal.com/reglamento-actividades",
+      "icon": "menu_book_rounded"
+    },
+    {
+      "titulo": "Guía de Senderismo Seguro",
+      "descripcion": "Consejos para preparar una salida, elegir equipo adecuado y prevenir riesgos en montaña.",
+      "categoria": "Guías",
+      "ruta": "https://www.clubandinojachal.com/guia-senderismo",
+      "icon": "menu_book_rounded"
+    },
+    {
+      "titulo": "Primeros Auxilios en Montaña",
+      "descripcion": "Material introductorio sobre prevención, respuesta inicial y comunicación ante incidentes.",
+      "categoria": "Seguridad",
+      "ruta": "https://www.clubandinojachal.com/primeros-auxilios",
+      "icon": "menu_book_rounded"
+    },
+    {
+      "titulo": "Formulario de Inscripción",
+      "descripcion": "Documento para registrar datos personales, contacto de emergencia y actividad elegida.",
+      "categoria": "Formularios",
+      "ruta": "https://www.clubandinojachal.com/formulario-inscripcion",
+      "icon": "menu_book_rounded"
+    },
+    {
+      "titulo": "Calendario de Actividades",
+      "descripcion": "Cronograma de caminatas, talleres, encuentros y propuestas recreativas del club.",
+      "categoria": "Institucional",
+      "ruta": "https://www.clubandinojachal.com/calendario",
+      "icon": "menu_book_rounded"
+    },
+    {
+      "titulo": "Manual del Socio",
+      "descripcion": "Información útil sobre beneficios, participación, canales de contacto y uso de espacios.",
+      "categoria": "Institucional",
+      "ruta": "https://www.clubandinojachal.com/manual-socio",
+      "icon": "menu_book_rounded"
+    }
+  ]
 }
