@@ -19,6 +19,15 @@ class CustomDrawer extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
+                Center(
+                    child: Image.asset(
+                      'assets/logo_caj3.png',
+                      width: 60.0,
+                      height: 60.0,
+                      fit: BoxFit.contain,
+                    ),
+                ),
+                const SizedBox(height: 8.0),
                 Text(
                   'Club Andino Jáchal',
                   style: TextStyle(
@@ -31,14 +40,17 @@ class CustomDrawer extends StatelessWidget {
                 Text(
                   'Menú de Opciones',
                   style: TextStyle(
-                    color: Theme.of(context).colorScheme.onPrimary.withValues(alpha: 0.8),
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onPrimary
+                        .withValues(alpha: 0.8),
                     fontSize: 14,
                   ),
                 ),
               ],
             ),
           ),
-          
+
           Expanded(
             child: _lista(context),
           ),
@@ -49,7 +61,7 @@ class CustomDrawer extends StatelessWidget {
 
   Widget _lista(BuildContext context) {
     return FutureBuilder(
-      future: menuProvider.cargarData(), 
+      future: menuProvider.cargarData(),
       initialData: const [],
       builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -58,7 +70,7 @@ class CustomDrawer extends StatelessWidget {
           );
         } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
           final data = snapshot.data!;
-          
+
           return ListView.separated(
             padding: EdgeInsets.zero,
             itemCount: data.length,
@@ -83,7 +95,10 @@ class CustomDrawer extends StatelessWidget {
         opt['texto'],
         style: const TextStyle(fontWeight: FontWeight.w500),
       ),
-      leading: getIcon(opt['icon'], color: Theme.of(context).colorScheme.primary),
+      leading: getIcon(
+        opt['icon'],
+        color: Theme.of(context).colorScheme.primary,
+      ),
       trailing: Icon(
         Icons.arrow_forward_ios_outlined,
         size: 16,
@@ -91,10 +106,10 @@ class CustomDrawer extends StatelessWidget {
       ),
       onTap: () {
         // Cierre del menú lateral de forma animada
-        Navigator.pop(context); 
-        
+        Navigator.pop(context);
+
         // Navegación a la ruta correspondiente
-        Navigator.pushReplacementNamed(context, opt['ruta']); 
+        Navigator.pushReplacementNamed(context, opt['ruta']);
       },
     );
   }
