@@ -20,6 +20,11 @@
             "ruta" : "contacto",
             "icon" : "account_circle_rounded",
             "texto": "Contacto"
+        },
+        {
+            "ruta": "admin-cobranzas",
+            "icon": "payments_rounded",
+            "texto": "Cobranzas"
         }
 
     ]

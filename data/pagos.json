@@ -1,0 +1,40 @@
+{
+  "pagos": [
+    {
+      "id": "1",
+      "socioId": "socio_1",
+      "nombreSocio": "Juan Pérez",
+      "telefono": "5492640000000",
+      "mes": "Junio",
+      "anio": 2026,
+      "monto": 15000,
+      "estado": "pendiente",
+      "comprobanteUrl": "mock/comprobante_1.jpg",
+      "fechaCarga": "2026-06-20"
+    },
+    {
+      "id": "2",
+      "socioId": "socio_2",
+      "nombreSocio": "María Gómez",
+      "telefono": "5492641111111",
+      "mes": "Junio",
+      "anio": 2026,
+      "monto": 15000,
+      "estado": "pendiente",
+      "comprobanteUrl": "mock/comprobante_2.jpg",
+      "fechaCarga": "2026-06-21"
+    },
+    {
+      "id": "3",
+      "socioId": "socio_3",
+      "nombreSocio": "Carlos Díaz",
+      "telefono": "5492642222222",
+      "mes": "Mayo",
+      "anio": 2026,
+      "monto": 15000,
+      "estado": "aprobado",
+      "comprobanteUrl": "mock/comprobante_3.jpg",
+      "fechaCarga": "2026-05-28"
+    }
+  ]
+}
