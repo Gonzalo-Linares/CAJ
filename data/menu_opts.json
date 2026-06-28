@@ -20,6 +20,11 @@
             "ruta" : "contacto",
             "icon" : "account_circle_rounded",
             "texto": "Contacto"
+        },
+        {
+            "ruta" : "socios",
+            "icon" : "people_alt_outlined",
+            "texto": "Gestión de Socios"
         }
 
     ]
