@@ -9,9 +9,11 @@ class TurnosPage extends StatefulWidget {
   State<TurnosPage> createState() => _TurnosPageState();
 }
 
+
+
 class _TurnosPageState extends State<TurnosPage> {
   List<dynamic> _misTurnos = [];
-  bool _isLoading = true; 
+
 
   final _nombreController = TextEditingController();
   final _apellidoController = TextEditingController();
@@ -36,16 +38,10 @@ class _TurnosPageState extends State<TurnosPage> {
   @override
   void initState() {
     super.initState();
-    _cargarDatosIniciales();
+    
   }
 
-  Future<void> _cargarDatosIniciales() async {
-    final data = await turnosProvider.cargarData();
-    setState(() {
-      _misTurnos = data; 
-      _isLoading = false; 
-    });
-  }
+ 
 
   @override
   void dispose() {
@@ -71,6 +67,23 @@ class _TurnosPageState extends State<TurnosPage> {
         _fechaController.text = 
             "${seleccionado.year}-${seleccionado.month.toString().padLeft(2, '0')}-${seleccionado.day.toString().padLeft(2, '0')}";
       });
+    }
+  }
+  Future<void>pedirTurno() async {
+    if (_formKey.currentState!.validate()) {
+      
+      final nuevoTurno = {
+        'fecha': _fechaController.text,
+        'hora': _horaController.text,
+        'nombre': _nombreController.text,
+        'apellido': _apellidoController.text,
+        'duracion': _duracionSeleccionada,
+      };
+
+      // Guardamos en la base de datos de verdad
+      await firebaseProvider.guardarTurno(nuevoTurno);
+
+      
     }
   }
 
@@ -242,34 +255,60 @@ class _TurnosPageState extends State<TurnosPage> {
             const SizedBox(height: 10),
             
             // LISTA DE TURNOS 
-            Expanded(
-              child: _isLoading 
-                  ? const Center(child: CircularProgressIndicator())
-                  : _misTurnos.isEmpty
-                      ? const Center(child: Text('No hay turnos disponibles.'))
-                      : ListView.builder(
-                          itemCount: _misTurnos.length,
-                          itemBuilder: (context, index) {
-                            final turno = _misTurnos[index]; 
-                            return Card(
-                              child: ListTile(
-                                leading: const Icon(Icons.person),
-                                title: Text('${turno['nombre']} ${turno['apellido']}'),
-                                subtitle: Text('Fecha: ${turno['fecha']} - Hora: ${turno['hora']} \nDuración: ${turno['duracion']}'),
-                                isThreeLine: true,
-                                trailing: IconButton(
-                                  icon: const Icon(Icons.cancel),
-                                  onPressed: () {
-                                    setState(() {
-                                      _misTurnos.removeAt(index);
-                                    });
-                                  },
-                                ),
-                              ),
-                            );
-                          },
-                        ),
+            // ... (Todo el formulario de arriba queda igual) ...
+
+// --- SECCIÓN 2: LISTA DE TURNOS EN TIEMPO REAL ---
+Expanded(
+  child: StreamBuilder<List<dynamic>>(
+    // Acá ponés la función que te pasó tu compañero
+    stream: firebaseProvider.obtenerTurnosStream(), 
+    builder: (context, snapshot) {
+      
+      // ESTADO 1: ¿Hay un error en la conexión?
+      if (snapshot.hasError) {
+        return Center(child: Text('Error al cargar turnos: ${snapshot.error}'));
+      }
+
+      // ESTADO 2: ¿Todavía está esperando la primera respuesta?
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return const Center(child: CircularProgressIndicator());
+      }
+
+      // ESTADO 3: ¿Llegaron los datos pero la lista está vacía?
+      final turnos = snapshot.data ?? [];
+      if (turnos.isEmpty) {
+        return const Center(child: Text('No hay turnos registrados aún.'));
+      }
+
+      // ESTADO 4: ¡Tenemos datos! Dibujamos la lista
+      return ListView.builder(
+        itemCount: turnos.length,
+        itemBuilder: (context, index) {
+          final turno = turnos[index];
+          
+          return Card(
+            child: ListTile(
+              leading: const Icon(Icons.person, color: Colors.blue),
+              title: Text('${turno['nombre']} ${turno['apellido']}'),
+              subtitle: Text(
+                'Fecha: ${turno['fecha']} - Hora: ${turno['hora']} \nDuración: ${turno['duracion']}'
+              ),
+              isThreeLine: true,
+              // Fíjate que el botón de eliminar ahora debería llamar a 
+              // una función de Firebase en lugar de un simple setState
+              trailing: IconButton(
+                icon: const Icon(Icons.cancel, color: Colors.red),
+                onPressed: () {
+                  // firebaseProvider.eliminarTurno(turno['id']);
+                },
+              ),
             ),
+          );
+        },
+      );
+    },
+  ),
+)
           ],
         ),
       ),
