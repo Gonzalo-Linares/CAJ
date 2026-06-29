@@ -22,10 +22,9 @@
             "texto": "Contacto"
         },
         {
-            "ruta": "admin-cobranzas",
-            "icon": "payments_rounded",
-            "texto": "Cobranzas"
+            "ruta" : "admin",
+            "icon" : "admin_panel_settings_rounded",
+            "texto": "Administrador"
         }
-
     ]
 }

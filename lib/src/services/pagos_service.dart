@@ -16,9 +16,12 @@ class PagosService {
   final List<Pago> _pagos = [];
   bool _cargado = false;
 
-  Stream<List<Pago>> obtenerPagosStream() {
-    _cargarDatosIniciales();
-    return _pagosController.stream;
+  Stream<List<Pago>> obtenerPagosStream() async* {
+    await _cargarDatosIniciales();
+
+    yield List.unmodifiable(_pagos);
+
+    yield* _pagosController.stream;
   }
 
   Future<List<Pago>> obtenerPagos() async {
@@ -54,7 +57,6 @@ class PagosService {
       ..addAll(data.map((item) => Pago.fromMap(item)));
 
     _cargado = true;
-    _emitirCambios();
   }
 
   Future<void> _actualizarEstadoPago(
@@ -79,9 +81,5 @@ class PagosService {
 
   void _emitirCambios() {
     _pagosController.add(List.unmodifiable(_pagos));
-  }
-
-  void dispose() {
-    _pagosController.close();
   }
 }

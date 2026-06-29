@@ -15,11 +15,26 @@ class AdminCobranzasPage extends StatefulWidget {
 
 class _AdminCobranzasPageState extends State<AdminCobranzasPage> {
   String _filtroEstado = 'pendiente';
+  String _busquedaSocio = '';
 
   List<Pago> _filtrarPagos(List<Pago> pagos) {
-    if (_filtroEstado == 'todos') return pagos;
+    final pagosPorEstado = _filtroEstado == 'todos'
+        ? pagos
+        : pagos.where((pago) => pago.estado == _filtroEstado).toList();
 
-    return pagos.where((pago) => pago.estado == _filtroEstado).toList();
+    final busqueda = _busquedaSocio.trim().toLowerCase();
+
+    if (busqueda.isEmpty) return pagosPorEstado;
+
+    return pagosPorEstado.where((pago) {
+      final nombre = pago.nombreSocio.toLowerCase();
+      final telefono = pago.telefono.toLowerCase();
+      final periodo = '${pago.mes} ${pago.anio}'.toLowerCase();
+
+      return nombre.contains(busqueda) ||
+          telefono.contains(busqueda) ||
+          periodo.contains(busqueda);
+    }).toList();
   }
 
   int _contarPorEstado(List<Pago> pagos, String estado) {
@@ -237,36 +252,69 @@ class _AdminCobranzasPageState extends State<AdminCobranzasPage> {
                           ),
                         ),
                         const SizedBox(height: 10.0),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: _ResumenEstadoChip(
-                                texto:
-                                    'Pend.: ${_contarPorEstado(pagos, 'pendiente')}',
-                                icono: Icons.schedule_outlined,
-                              ),
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12.0,
+                            vertical: 10.0,
+                          ),
+                          decoration: BoxDecoration(
+                            color: colores.onPrimary.withValues(alpha: 0.10),
+                            borderRadius: BorderRadius.circular(14.0),
+                            border: Border.all(
+                              color: colores.onPrimary.withValues(alpha: 0.22),
                             ),
-                            const SizedBox(width: 4.0),
-                            Expanded(
-                              child: _ResumenEstadoChip(
-                                texto:
-                                    'Aprob.: ${_contarPorEstado(pagos, 'aprobado')}',
-                                icono: Icons.check_circle_outline,
+                          ),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: _ResumenEstadoItem(
+                                  valor: _contarPorEstado(pagos, 'pendiente').toString(),
+                                  etiqueta: 'Pendientes',
+                                ),
                               ),
-                            ),
-                            const SizedBox(width: 4.0),
-                            Expanded(
-                              child: _ResumenEstadoChip(
-                                texto:
-                                    'Rech.: ${_contarPorEstado(pagos, 'rechazado')}',
-                                icono: Icons.cancel_outlined,
+                              Container(
+                                width: 1,
+                                height: 42,
+                                color: colores.onPrimary.withValues(alpha: 0.20),
                               ),
-                            ),
-                          ],
+                              Expanded(
+                                child: _ResumenEstadoItem(
+                                  valor: _contarPorEstado(pagos, 'aprobado').toString(),
+                                  etiqueta: 'Aprobados',
+                                ),
+                              ),
+                              Container(
+                                width: 1,
+                                height: 42,
+                                color: colores.onPrimary.withValues(alpha: 0.20),
+                              ),
+                              Expanded(
+                                child: _ResumenEstadoItem(
+                                  valor: _contarPorEstado(pagos, 'rechazado').toString(),
+                                  etiqueta: 'Rechazados',
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
                   ),
+                ),
+                const SizedBox(height: 12.0),
+                TextField(
+                  decoration: const InputDecoration(
+                    labelText: 'Buscar socio',
+                    hintText: 'Nombre, teléfono o período',
+                    prefixIcon: Icon(Icons.search),
+                    border: OutlineInputBorder(),
+                  ),
+                  onChanged: (valor) {
+                    setState(() {
+                      _busquedaSocio = valor;
+                    });
+                  },
                 ),
                 const SizedBox(height: 12.0),
                 DropdownButtonFormField<String>(
@@ -338,53 +386,42 @@ class _AdminCobranzasPageState extends State<AdminCobranzasPage> {
   }
 }
 
-class _ResumenEstadoChip extends StatelessWidget {
-  final String texto;
-  final IconData icono;
+class _ResumenEstadoItem extends StatelessWidget {
+  final String valor;
+  final String etiqueta;
 
-  const _ResumenEstadoChip({
-    required this.texto,
-    required this.icono,
+  const _ResumenEstadoItem({
+    required this.valor,
+    required this.etiqueta,
   });
 
   @override
   Widget build(BuildContext context) {
-    final colores = Theme.of(context).colorScheme;
+    final tema = Theme.of(context);
+    final colores = tema.colorScheme;
 
-    return Container(
-      height: 30.0,
-      padding: const EdgeInsets.symmetric(horizontal: 4.0),
-      decoration: BoxDecoration(
-        color: colores.onPrimary.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(16.0),
-        border: Border.all(
-          color: colores.onPrimary.withValues(alpha: 0.35),
-        ),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            icono,
-            size: 14.0,
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          valor,
+          style: tema.textTheme.titleLarge?.copyWith(
             color: colores.onPrimary,
+            fontWeight: FontWeight.bold,
           ),
-          const SizedBox(width: 3.0),
-          Flexible(
-            child: FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Text(
-                texto,
-                maxLines: 1,
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      color: colores.onPrimary,
-                      fontWeight: FontWeight.bold,
-                    ),
-              ),
-            ),
+        ),
+        const SizedBox(height: 2.0),
+        Text(
+          etiqueta,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          textAlign: TextAlign.center,
+          style: tema.textTheme.labelMedium?.copyWith(
+            color: colores.onPrimary.withValues(alpha: 0.85),
+            fontWeight: FontWeight.w500,
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

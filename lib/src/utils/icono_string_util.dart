@@ -8,6 +8,8 @@ final Map<String, IconData> _icons = {
   'calendar_month_rounded': Icons.calendar_month_rounded,
   'menu_book_rounded': Icons.menu_book_rounded,
   'account_circle_rounded': Icons.account_circle_rounded,
+  'people_alt_outlined': Icons.people_alt_outlined,
+  'admin_panel_settings_rounded': Icons.admin_panel_settings_rounded,
   'payments_rounded': Icons.payments_rounded,
 };
 
