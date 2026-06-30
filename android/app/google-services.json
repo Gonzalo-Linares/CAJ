@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "37076963723",
+    "project_id": "base-de-datos-caj",
+    "storage_bucket": "base-de-datos-caj.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:37076963723:android:a12d5a19874e6204ef5f8e",
+        "android_client_info": {
+          "package_name": "com.example.controlturnos"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBTJQniE7IF2Ttf_YWoVC_d7MCUicbT_nA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

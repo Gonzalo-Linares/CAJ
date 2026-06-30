@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
-import '../../utils/icono_string_util.dart'; // Ajustá la ruta según tu proyecto
+import 'package:controlturnos/src/models/libro_model.dart';
+import 'package:controlturnos/src/utils/icono_string_util.dart';
 
 class TarjetaBiblioteca extends StatelessWidget {
-  final Map<String, dynamic> libro;
+  final LibroModel libro;
+  final VoidCallback onDescargar;
 
-  const TarjetaBiblioteca({super.key, required this.libro});
+  const TarjetaBiblioteca({
+    super.key,
+    required this.libro,
+    required this.onDescargar,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -13,10 +19,7 @@ class TarjetaBiblioteca extends StatelessWidget {
     return Card(
       elevation: 4,
       color: colors.surface,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15),
-        side: BorderSide(color: colors.primary.withValues(alpha: 0.1)),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       child: Padding(
         padding: const EdgeInsets.all(12.0),
         child: Column(
@@ -26,30 +29,45 @@ class TarjetaBiblioteca extends StatelessWidget {
               alignment: Alignment.topRight,
               child: CircleAvatar(
                 backgroundColor: colors.secondary.withValues(alpha: 0.2),
-                child: getIcon(libro['icon']),
+                child: getIcon(libro.icon),
               ),
             ),
             const Spacer(),
-
-            // Si en el futuro agregás el logo, va acá arriba del título
+            // Badge sutil que muestra la categoría (Nueva mejora visual gracias a Firestore)
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              decoration: BoxDecoration(
+                color: colors.primary.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(5),
+              ),
+              child: Text(
+                libro.categoria.toUpperCase(),
+                style: TextStyle(
+                  fontSize: 9,
+                  fontWeight: FontWeight.bold,
+                  color: colors.primary,
+                ),
+              ),
+            ),
+            const SizedBox(height: 6),
             Text(
-              libro['titulo'] ?? '',
+              libro.titulo,
               style: TextStyle(
-                fontSize: 16,
+                fontSize: 15,
                 fontWeight: FontWeight.bold,
                 color: colors.onSurface,
               ),
-              maxLines: 2,
+              maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
             const SizedBox(height: 4),
             Text(
-              libro['descripcion'] ?? '',
+              libro.descripcion,
               style: TextStyle(
-                fontSize: 12,
+                fontSize: 11,
                 color: colors.onSurface.withValues(alpha: 0.7),
               ),
-              maxLines: 3,
+              maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
             const Spacer(),
@@ -57,16 +75,7 @@ class TarjetaBiblioteca extends StatelessWidget {
               width: double.infinity,
               height: 36,
               child: ElevatedButton(
-                onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Descargando: ${libro['titulo']}')),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
+                onPressed: onDescargar,
                 child: const Text(
                   'Descargar',
                   style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
