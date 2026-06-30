@@ -1,7 +1,4 @@
-import 'dart:async';
-import 'dart:convert';
-
-import 'package:flutter/services.dart' show rootBundle;
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../models/pago.dart';
 
@@ -10,26 +7,35 @@ class PagosService {
 
   static final PagosService instance = PagosService._internal();
 
-  final StreamController<List<Pago>> _pagosController =
-      StreamController<List<Pago>>.broadcast();
+  final CollectionReference<Map<String, dynamic>> _pagosRef =
+      FirebaseFirestore.instance.collection('pagos');
 
-  final List<Pago> _pagos = [];
-  bool _cargado = false;
-
-  Stream<List<Pago>> obtenerPagosStream() async* {
-    await _cargarDatosIniciales();
-
-    yield List.unmodifiable(_pagos);
-
-    yield* _pagosController.stream;
+  Stream<List<Pago>> obtenerPagosStream() {
+    return _pagosRef.snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return Pago.fromMap(
+          doc.data(),
+          documentId: doc.id,
+        );
+      }).toList();
+    });
   }
 
   Future<List<Pago>> obtenerPagos() async {
-    await _cargarDatosIniciales();
-    return List.unmodifiable(_pagos);
+    final snapshot = await _pagosRef.get();
+
+    return snapshot.docs.map((doc) {
+      return Pago.fromMap(
+        doc.data(),
+        documentId: doc.id,
+      );
+    }).toList();
   }
 
-  Future<void> aprobarPago(String pagoId, {String revisadoPor = ''}) async {
+  Future<void> aprobarPago(
+    String pagoId, {
+    String revisadoPor = '',
+  }) async {
     await _actualizarEstadoPago(
       pagoId,
       estado: 'aprobado',
@@ -37,7 +43,10 @@ class PagosService {
     );
   }
 
-  Future<void> rechazarPago(String pagoId, {String revisadoPor = ''}) async {
+  Future<void> rechazarPago(
+    String pagoId, {
+    String revisadoPor = '',
+  }) async {
     await _actualizarEstadoPago(
       pagoId,
       estado: 'rechazado',
@@ -45,41 +54,15 @@ class PagosService {
     );
   }
 
-  Future<void> _cargarDatosIniciales() async {
-    if (_cargado) return;
-
-    final resp = await rootBundle.loadString('data/pagos.json');
-    final Map<String, dynamic> dataMap = json.decode(resp);
-    final List<dynamic> data = dataMap['pagos'] ?? [];
-
-    _pagos
-      ..clear()
-      ..addAll(data.map((item) => Pago.fromMap(item)));
-
-    _cargado = true;
-  }
-
   Future<void> _actualizarEstadoPago(
     String pagoId, {
     required String estado,
     required String revisadoPor,
   }) async {
-    await _cargarDatosIniciales();
-
-    final index = _pagos.indexWhere((pago) => pago.id == pagoId);
-
-    if (index == -1) return;
-
-    _pagos[index] = _pagos[index].copyWith(
-      estado: estado,
-      fechaRevision: DateTime.now(),
-      revisadoPor: revisadoPor,
-    );
-
-    _emitirCambios();
-  }
-
-  void _emitirCambios() {
-    _pagosController.add(List.unmodifiable(_pagos));
+    await _pagosRef.doc(pagoId).update({
+      'estado': estado,
+      'fechaRevision': FieldValue.serverTimestamp(),
+      'revisadoPor': revisadoPor,
+    });
   }
 }
