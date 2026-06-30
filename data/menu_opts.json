@@ -22,10 +22,9 @@
             "texto": "Contacto"
         },
         {
-            "ruta" : "socios",
-            "icon" : "people_alt_outlined",
-            "texto": "Gestión de Socios"
+            "ruta" : "admin",
+            "icon" : "admin_panel_settings_rounded",
+            "texto": "Administrador"
         }
-
     ]
 }
