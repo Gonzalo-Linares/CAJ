@@ -1,25 +1,49 @@
-import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 
-import 'package:flutter/services.dart' show rootBundle;
+class FirebaseProvider {
+  
+  final CollectionReference _turnosCollection = 
+      FirebaseFirestore.instance.collection('turnos');
 
-//Se genera de manera privada la clase
-class _TurnosProvider {
-  //Se genera una lista dinámica y se inicializa como una lista vacía
-  List<dynamic> turnos = [];
+  //MÉTODO PARA GUARDAR UN TURNO NUEVO
+  Future<void> guardarTurno(Map<String, dynamic> nuevoTurno) async {
+    try {
+      // .add() crea un documento nuevo automáticamente con un ID único
+      await _turnosCollection.add(nuevoTurno);
+    } catch (e) {
+      debugPrint('Error al guardar el turno: $e');
+      rethrow;
+    }
+  }
 
-  //Se define el constructor
-  _TurnosProvider();
-
-  //El método cargarData es un Future que permite devolver el listado de turnos una vez que se ha leído del archivo JSON
-  //El Future va a retornar cuando esté disponible, la información en una lista dinámica
-  Future<List<dynamic>> cargarData() async {
-    final resp = await rootBundle.loadString('data/turnos.json');
-    Map dataMap = json.decode(resp);
-    turnos = dataMap['turnos'];
-
-    return turnos;
+  // MÉTODO PARA ESCUCHAR LOS TURNOS EN TIEMPO REAL 
+  Stream<List<Map<String, dynamic>>> obtenerTurnosStream() {
+    // Escuchamos los cambios en la colección
+    return _turnosCollection.snapshots().map((QuerySnapshot snapshot) {
+      
+      // Convertimos los documentos de Firebase a una lista de Mapas
+      return snapshot.docs.map((doc) {
+        // Obtenemos los datos del documento
+        final data = doc.data() as Map<String, dynamic>;
+        
+        
+        data['id'] = doc.id; 
+        
+        return data;
+      }).toList();
+    });
+  }
+  
+  // MÉTODO PARA ELIMINAR UN TURNO
+  Future<void> eliminarTurno(String idDocumento) async {
+    try {
+      await _turnosCollection.doc(idDocumento).delete();
+    } catch (e) {
+      debugPrint('Error al eliminar el turno: $e');
+    }
   }
 }
 
-//Se crea la instancia del TurnosProvider
-final turnosProvider = _TurnosProvider();
+// Instanciamos el provider para usarlo en toda la app
+final firebaseProvider = FirebaseProvider();

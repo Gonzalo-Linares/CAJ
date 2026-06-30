@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../widgets/main_layout.dart';
-import '../provider/turnos_provider.dart';
+import '../provider/turnos_provider.dart'; 
 
 class TurnosPage extends StatefulWidget {
   const TurnosPage({super.key});
@@ -10,18 +10,14 @@ class TurnosPage extends StatefulWidget {
 }
 
 class _TurnosPageState extends State<TurnosPage> {
-  List<dynamic> _misTurnos = [];
-  bool _isLoading = true; 
 
   final _nombreController = TextEditingController();
   final _apellidoController = TextEditingController();
   final _fechaController = TextEditingController();
   final _horaController = TextEditingController();
   
-  // VARIABLE PARA GUARDAR LA DURACIÓN SELECCIONADA (Por defecto 30 min)
   String? _duracionSeleccionada = '30 minutos';
 
-  // Lista de opciones para la solapa de duración (de a 30 minutos)
   final List<String> _opcionesDuracion = [
     '30 minutos',
     '1 hora',
@@ -34,20 +30,6 @@ class _TurnosPageState extends State<TurnosPage> {
   final _formKey = GlobalKey<FormState>();
 
   @override
-  void initState() {
-    super.initState();
-    _cargarDatosIniciales();
-  }
-
-  Future<void> _cargarDatosIniciales() async {
-    final data = await turnosProvider.cargarData();
-    setState(() {
-      _misTurnos = data; 
-      _isLoading = false; 
-    });
-  }
-
-  @override
   void dispose() {
     _nombreController.dispose();
     _apellidoController.dispose();
@@ -56,25 +38,22 @@ class _TurnosPageState extends State<TurnosPage> {
     super.dispose();
   }
 
-  // FUNCIÓN PARA ABRIR EL CALENDARIO NATIVO
   Future<void> _seleccionarFecha(BuildContext context) async {
     final DateTime? seleccionado = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
-      firstDate: DateTime.now(), // No permite elegir fechas pasadas
+      firstDate: DateTime.now(), 
       lastDate: DateTime(2030),
     );
 
     if (seleccionado != null) {
       setState(() {
-        // Formateo de la fecha a YYYY-MM-DD para que coincida el JSON
         _fechaController.text = 
             "${seleccionado.year}-${seleccionado.month.toString().padLeft(2, '0')}-${seleccionado.day.toString().padLeft(2, '0')}";
       });
     }
   }
 
-  // FUNCIÓN PARA ABRIR EL RELOJ NATIVO
   Future<void> _seleccionarHora(BuildContext context) async {
     final TimeOfDay? seleccionado = await showTimePicker(
       context: context,
@@ -83,44 +62,66 @@ class _TurnosPageState extends State<TurnosPage> {
 
     if (seleccionado != null) {
       setState(() {
-        // Formateo de la hora a HH:MM
         _horaController.text = 
             "${seleccionado.hour.toString().padLeft(2, '0')}:${seleccionado.minute.toString().padLeft(2, '0')}";
       });
     }
   }
 
-  void _pedirTurno() {
+  
+  Future<void> _pedirTurno() async {
     if (_formKey.currentState!.validate()) {
-      setState(() {
-        _misTurnos.add({
-          'fecha': _fechaController.text,
-          'hora': _horaController.text,
-          'nombre': _nombreController.text,
-          'apellido': _apellidoController.text,
-          'duracion': _duracionSeleccionada, // Guardamos lo elegido en la solapa
+      
+      final nuevoTurno = {
+        'fecha': _fechaController.text,
+        'hora': _horaController.text,
+        'nombre': _nombreController.text,
+        'apellido': _apellidoController.text,
+        'duracion': _duracionSeleccionada,
+      };
+
+      try {
+        // Guardamos en Firebase 
+        await firebaseProvider.guardarTurno(nuevoTurno);
+
+        
+        // Preguntamos si la pantalla sigue abierta antes de continuar
+        if (!mounted) return;
+
+        // Limpiamos los campos
+        _nombreController.clear();
+        _apellidoController.clear();
+        _fechaController.clear();
+        _horaController.clear();
+        
+        // Reseteamos el formulario entero 
+        _formKey.currentState!.reset();
+
+        setState(() {
+          _duracionSeleccionada = '30 minutos';
         });
-      });
+        
+        FocusScope.of(context).unfocus();
 
-      _nombreController.clear();
-      _apellidoController.clear();
-      _fechaController.clear();
-      _horaController.clear();
-      
-      // Reiniciamos la solapa al valor por defecto
-      setState(() {
-        _duracionSeleccionada = '30 minutos';
-      });
-      
-      FocusScope.of(context).unfocus();
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('¡Turno pedido con éxito!'),
-          backgroundColor: Colors.green,
-          duration: Duration(seconds: 2),
-        ),
-      );
+        
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('¡Turno pedido con éxito!'),
+            backgroundColor: Colors.green,
+            duration: Duration(seconds: 2),
+          ),
+        );
+      } catch (e) {
+        // Por si falla Firebase, verificamos antes de mostrar el error
+        if (!mounted) return; 
+        
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error al guardar: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 
@@ -133,7 +134,7 @@ class _TurnosPageState extends State<TurnosPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            //  FORMULARIO 
+            //  FORMULARIO
             Card(
               elevation: 4,
               child: Padding(
@@ -150,7 +151,6 @@ class _TurnosPageState extends State<TurnosPage> {
                         ),
                         const SizedBox(height: 10),
                         
-                        // Nombre y Apellido
                         Row(
                           children: [
                             Expanded(
@@ -172,19 +172,18 @@ class _TurnosPageState extends State<TurnosPage> {
                         ),
                         const SizedBox(height: 10),
                         
-                        // CAMPOS DE FECHA Y HORA COMO BOTONES
                         Row(
                           children: [
                             Expanded(
                               child: TextFormField(
                                 controller: _fechaController,
-                                readOnly: true, // Evita que se abra el teclado numérico
+                                readOnly: true, 
                                 decoration: const InputDecoration(
                                   labelText: 'Fecha', 
                                   border: OutlineInputBorder(),
                                   suffixIcon: Icon(Icons.calendar_today),
                                 ),
-                                onTap: () => _seleccionarFecha(context), // Abre el calendario al tocar
+                                onTap: () => _seleccionarFecha(context), 
                                 validator: (v) => v!.isEmpty ? 'Falta fecha' : null,
                               ),
                             ),
@@ -192,13 +191,13 @@ class _TurnosPageState extends State<TurnosPage> {
                             Expanded(
                               child: TextFormField(
                                 controller: _horaController,
-                                readOnly: true, // Evita que se abra el teclado numérico
+                                readOnly: true, 
                                 decoration: const InputDecoration(
                                   labelText: 'Hora', 
                                   border: OutlineInputBorder(),
                                   suffixIcon: Icon(Icons.access_time),
                                 ),
-                                onTap: () => _seleccionarHora(context), // Abre el reloj al tocar
+                                onTap: () => _seleccionarHora(context), 
                                 validator: (v) => v!.isEmpty ? 'Falta hora' : null,
                               ),
                             ),
@@ -206,9 +205,8 @@ class _TurnosPageState extends State<TurnosPage> {
                         ),
                         const SizedBox(height: 10),
                         
-                        // SOLAPA (DROPDOWN) PARA LA DURACIÓN
                         DropdownButtonFormField<String>(
-                          initialValue: _duracionSeleccionada,
+                          initialValue: _duracionSeleccionada, 
                           decoration: const InputDecoration(
                             labelText: 'Duración del turno',
                             border: OutlineInputBorder(),
@@ -227,7 +225,7 @@ class _TurnosPageState extends State<TurnosPage> {
                         ),
                         const SizedBox(height: 16),
                         ElevatedButton(
-                          onPressed: _pedirTurno,
+                          onPressed: _pedirTurno, // Ahora llama a la función correcta
                           child: const Text('Confirmar Turno'),
                         ),
                       ],
@@ -241,35 +239,52 @@ class _TurnosPageState extends State<TurnosPage> {
             const Text('Tus Turnos Activos', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             const SizedBox(height: 10),
             
-            // LISTA DE TURNOS 
+            //LISTA DE TURNOS 
             Expanded(
-              child: _isLoading 
-                  ? const Center(child: CircularProgressIndicator())
-                  : _misTurnos.isEmpty
-                      ? const Center(child: Text('No hay turnos disponibles.'))
-                      : ListView.builder(
-                          itemCount: _misTurnos.length,
-                          itemBuilder: (context, index) {
-                            final turno = _misTurnos[index]; 
-                            return Card(
-                              child: ListTile(
-                                leading: const Icon(Icons.person),
-                                title: Text('${turno['nombre']} ${turno['apellido']}'),
-                                subtitle: Text('Fecha: ${turno['fecha']} - Hora: ${turno['hora']} \nDuración: ${turno['duracion']}'),
-                                isThreeLine: true,
-                                trailing: IconButton(
-                                  icon: const Icon(Icons.cancel),
-                                  onPressed: () {
-                                    setState(() {
-                                      _misTurnos.removeAt(index);
-                                    });
-                                  },
-                                ),
-                              ),
-                            );
-                          },
+              child: StreamBuilder<List<dynamic>>(
+                stream: firebaseProvider.obtenerTurnosStream(), 
+                builder: (context, snapshot) {
+                  
+                  if (snapshot.hasError) {
+                    return Center(child: Text('Error al cargar turnos: ${snapshot.error}'));
+                  }
+
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  final turnos = snapshot.data ?? [];
+                  if (turnos.isEmpty) {
+                    return const Center(child: Text('No hay turnos registrados aún.'));
+                  }
+
+                  return ListView.builder(
+                    itemCount: turnos.length,
+                    itemBuilder: (context, index) {
+                      final turno = turnos[index];
+                      
+                      return Card(
+                        child: ListTile(
+                          leading: const Icon(Icons.person, color: Colors.blue),
+                          title: Text('${turno['nombre']} ${turno['apellido']}'),
+                          subtitle: Text(
+                            'Fecha: ${turno['fecha']} - Hora: ${turno['hora']} \nDuración: ${turno['duracion']}'
+                          ),
+                          isThreeLine: true,
+                          trailing: IconButton(
+                            icon: const Icon(Icons.cancel, color: Colors.red),
+                            onPressed: () {
+                              
+                              firebaseProvider.eliminarTurno(turno['id']); 
+                            },
+                          ),
                         ),
-            ),
+                      );
+                    },
+                  );
+                },
+              ),
+            )
           ],
         ),
       ),

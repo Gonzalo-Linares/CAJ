@@ -1,32 +1,40 @@
 {
-    "nombreApp" : "Club Andino Jáchal",
-    "rutas" : [
-        {
-            "ruta" : "/",
-            "icon" : "home",
-            "texto": "Inicio"
-        },
-        {
-            "ruta" : "turnos",
-            "icon" : "calendar_month_rounded",
-            "texto": "Turnos"
-        },
-        {
-            "ruta" : "biblioteca",
-            "icon" : "menu_book_rounded",
-            "texto": "Biblioteca"
-        },
-        {
-            "ruta" : "contacto",
-            "icon" : "account_circle_rounded",
-            "texto": "Contacto"
-        },
-        
-        {
-            "ruta": "pago",
-            "icon": "credit_card_rounded",
-            "texto": "Pago" 
-        }
-
-    ]
+"nombreApp": "Club Andino Jáchal",
+"rutas" : [
+    {
+        "ruta" : "/",
+        "icon" : "home",
+        "texto": "Inicio"
+    },
+    {
+        "ruta" : "turnos",
+        "icon" : "calendar_month_rounded",
+        "texto": "Turnos"
+    },
+    {
+        "ruta" : "biblioteca",
+        "icon" : "menu_book_rounded",
+        "texto": "Biblioteca"
+    },
+    {
+        "ruta" : "contacto",
+        "icon" : "account_circle_rounded",
+        "texto": "Contacto"
+    },
+    {
+        "ruta" : "pago",
+        "icon" : "credit_card_rounded",
+        "texto": "Pago"
+    },
+    {
+        "ruta" : "socios",
+        "icon" : "people_alt_outlined",
+        "texto": "Socios"
+    },
+    {
+        "ruta" : "admin",
+        "icon" : "admin_panel_settings_rounded",
+        "texto": "Administrador"
+    }
+]
 }
